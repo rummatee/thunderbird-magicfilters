@@ -1,21 +1,20 @@
 window.addEventListener("load", function(e) { 
-	startup(); 
+    startup(); 
 }, false);
 
 function startup() {
-	var myPanel = document.getElementById("my-panel");
-        
-	myPanel.label = "Du nutzt magicFilters von Florian Schunk";
+    var myPanel = document.getElementById("my-panel");
+    myPanel.label = "Du nutzt magicFilters von Florian Schunk";
 }
 
 var newMailListener = {
     msgAdded: function(aMsgHdr) {
-            var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                 .getService(Components.interfaces.nsIPrefService)
                 .getBranch("extensions.magicfilters.");
-            var myPanel = document.getElementById("my-panel");
-	    if( !aMsgHdr.isRead ) {
-                    
+        var myPanel = document.getElementById("my-panel");
+        if( !aMsgHdr.isRead ) {
+
                     var recipients = aMsgHdr.recipients;
                     var prettyName = aMsgHdr.folder.server.prettyName;
                     var atPosition = prettyName.indexOf("@");
@@ -36,7 +35,6 @@ var newMailListener = {
                                     parent.getChildNamed(dirname);
                                 } catch (err) {
                                     parent.createSubfolder(dirname,null);
-                
                                 }
                                 listLength++;
                                 setTimeout(function(){
@@ -46,6 +44,7 @@ var newMailListener = {
                                 
                             }
                         });
+
                         setTimeout(function(){
                             if (listTargetDirs.length == 1) {
                                 var cs = Components.classes["@mozilla.org/messenger/messagecopyservice;1"].getService(Components.interfaces.nsIMsgCopyService);
@@ -62,6 +61,7 @@ var newMailListener = {
 }
 
 function createSubfolderIfnotExists(parent,name) {
+
         try {
             parent.getChildNamed(name);
         } catch (err) {
@@ -75,9 +75,10 @@ function createSubfolderIfnotExists(parent,name) {
 
 
 function init() {
+
     var notificationService =
-	Components.classes["@mozilla.org/messenger/msgnotificationservice;1"]
-	.getService(Components.interfaces.nsIMsgFolderNotificationService);
+    Components.classes["@mozilla.org/messenger/msgnotificationservice;1"]
+    .getService(Components.interfaces.nsIMsgFolderNotificationService);
     notificationService.addListener(newMailListener, notificationService.msgAdded); 
 }
 
