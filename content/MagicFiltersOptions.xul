@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!DOCTYPE window >
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        buttons="accept"
+        onload="onDialogLoad();"
+        ondialogaccept="return onDialogAccept();"
+        persist="screenX screenY"
+        style="width: 48em; height: 27em;"
+        title="Magic Filters Options"
+        id="MagicFiltersOptions">
+    
+    <script type="application/x-javascript" src="chrome://magicfilters/content/MagicFiltersOptions.js"/>
+    
+    <prefpane id="magicfilters-pane" label="magicfilters" style="overflow: auto;">
+    
+    <preferences>
+        <preference id="pref_subaddressFilter" name="extensions.magicfilters.subaddressFilter" type="bool"/>
+        <preference id="pref_serverTimeout" name="extensions.magicfilters.serverTimeout" type="int"/>
+    </preferences>
+    
+    
+    <tabbox flex="1" style="margin:5px" id="prefTabs">
+        <tabs id="prefTabBox">
+            <tab id="basicTab"      label="Basic"/>
+                
+            <tab id="testTab"      label="Server"/>
+        </tabs>
+        <tabpanels flex="1" id="enigPrefTabPanel">
+            <vbox id="basic" flex="1">
+                <checkbox preference="pref_subaddressFilter" label="Filter for subaddresses"/>
+            </vbox>
+            <vbox id="server" flex="1">
+                <hbox>
+                    <label value="milliseconds to wait for servers to create new folders"/>
+                    <textbox preference="pref_serverTimeout" type="number" />
+                </hbox>
+            </vbox>
+        </tabpanels>
+    </tabbox>
+    
+    </prefpane>
+    
+</dialog>

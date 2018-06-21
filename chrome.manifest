@@ -1,2 +1,3 @@
 content     magicfilters    content/
+
 overlay chrome://messenger/content/messenger.xul chrome://magicfilters/content/myhelloworld.xul
