@@ -19,6 +19,7 @@
     
     <preferences>
         <preference id="pref_subaddressFilter" name="extensions.magicfilters.subaddressFilter" type="bool"/>
+        <preference id="pref_mailinglistFilter" name="extensions.magicfilters.mailinglistFilter" type="bool"/>
         <preference id="pref_serverTimeout" name="extensions.magicfilters.serverTimeout" type="int"/>
     </preferences>
     
@@ -32,6 +33,7 @@
         <tabpanels flex="1" id="enigPrefTabPanel">
             <vbox id="basic" flex="1">
                 <checkbox preference="pref_subaddressFilter" label="Filter for subaddresses"/>
+                <checkbox preference="pref_mailinglistFilter" label="Filter for mailinglists"/>
             </vbox>
             <vbox id="server" flex="1">
                 <hbox>

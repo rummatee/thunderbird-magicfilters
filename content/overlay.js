@@ -25,7 +25,7 @@ var newMailListener = {
                     var listTargetDirs = [];
                     var listLength = 0;
                     if (prefs.getBoolPref("subaddressFilter")) {
-                    listRecipients.forEach(function(entry){
+                        listRecipients.forEach(function(entry){
                         
                             if (entry.startsWith(userName+".") && entry.endsWith("@"+hostName)) {
                                 
@@ -55,7 +55,18 @@ var newMailListener = {
                             }
                         }, 2000*listLength);
                     }
+                    if (prefs.getBoolPref("mailinglistFilter")) {
+                        var beginningIndex = 0;
+                        var endIndex = 0;
+                        while (subject.includes("[",endIndex) && subject.includes("]",endIndex+1)) {
+                            beginningIndex = subject.indexOf("[",endIndex);
+                            endIndex = subject.indexOf("]",beginningIndex);
+                            mailinglistName = subject.substring(beginningIndex+1,endIndex);
+                            myPanel.label = "found Mailinglist in subject. "+mailinglistName;
+                        }
+                    }
             }
+
                     
     }
 }
