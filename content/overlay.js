@@ -7,6 +7,7 @@ function startup() {
     myPanel.label = "Du nutzt magicFilters von Florian Schunk";
 }
 
+var magicFilter_listTargetDirs = [];
 var newMailListener = {
     msgAdded: function(aMsgHdr) {
         var prefs = Components.classes["@mozilla.org/preferences-service;1"]
@@ -22,7 +23,8 @@ var newMailListener = {
                     var userName = prettyName.substring(0,atPosition);
                     var subject = aMsgHdr.subject;
                     var listRecipients = recipients.split(" ");
-                    var listTargetDirs = [];
+                    var parent = aMsgHdr.folder.rootFolder;
+                    magicFilter_listTargetDirs = [];
                     var listLength = 0;
                     if (prefs.getBoolPref("subaddressFilter")) {
                         listRecipients.forEach(function(entry){
@@ -30,30 +32,15 @@ var newMailListener = {
                             if (entry.startsWith(userName+".") && entry.endsWith("@"+hostName)) {
                                 
                                 var dirname = entry.substring(userName.length+1,entry.length-hostName.length-1);
-                                parent = aMsgHdr.folder.rootFolder;
-                                try {
-                                    parent.getChildNamed(dirname);
-                                } catch (err) {
-                                    parent.createSubfolder(dirname,null);
-                                }
+                                
+                                myPanel.label = "call creating folder function";
+                                createSubfolderIfnotExists(parent,dirname);
                                 listLength++;
-                                setTimeout(function(){
-                                    var dir = parent.getChildNamed(dirname);
-                                    listTargetDirs.push(dir);
-                                }, 2000);
                                 
                             }
                         });
 
-                        setTimeout(function(){
-                            if (listTargetDirs.length == 1) {
-                                var cs = Components.classes["@mozilla.org/messenger/messagecopyservice;1"].getService(Components.interfaces.nsIMsgCopyService);
-                                var mutableArray = Components.classes["@mozilla.org/array;1"].createInstance(Components.interfaces.nsIMutableArray);
-                                
-                                mutableArray.appendElement(aMsgHdr, false /*weak*/);
-                                cs.CopyMessages(aMsgHdr.folder,mutableArray,listTargetDirs[0],1,null,msgWindow,true);
-                            }
-                        }, 2000*listLength);
+
                     }
                     if (prefs.getBoolPref("mailinglistFilter")) {
                         var beginningIndex = 0;
@@ -63,16 +50,32 @@ var newMailListener = {
                             endIndex = subject.indexOf("]",beginningIndex);
                             mailinglistName = subject.substring(beginningIndex+1,endIndex);
                             myPanel.label = "found Mailinglist in subject. "+mailinglistName;
+                            createSubfolderIfnotExists(parent,mailinglistName);
+                            listLength++;
                         }
                     }
+                    myPanel.label = "list Length: "+listLength;
+                    setTimeout(function(){
+                        myPanel.label = "now actually move message "+ magicFilter_listTargetDirs.length;
+                        if (magicFilter_listTargetDirs.length == 1) {
+                            myPanel.label = "unambigues folder";
+                            var cs = Components.classes["@mozilla.org/messenger/messagecopyservice;1"].getService(Components.interfaces.nsIMsgCopyService);
+                            var mutableArray = Components.classes["@mozilla.org/array;1"].createInstance(Components.interfaces.nsIMutableArray);
+                                
+                            mutableArray.appendElement(aMsgHdr, false /*weak*/);
+                            cs.CopyMessages(aMsgHdr.folder,mutableArray,magicFilter_listTargetDirs[0],1,null,msgWindow,true);
+                            myPanel.label = "moved message"
+                        }
+                    }, 2000*listLength+2000);
             }
 
                     
     }
 }
 
-function createSubfolderIfnotExists(parent,name) {
 
+function createSubfolderIfnotExists(parent,name) {
+        document.getElementById("my-panel").label = "function called";
         try {
             parent.getChildNamed(name);
         } catch (err) {
@@ -81,7 +84,14 @@ function createSubfolderIfnotExists(parent,name) {
             
         }
         document.getElementById("my-panel").label = "to return folder";
-        return parent.getChildNamed(name);
+        
+        setTimeout(function(){
+            document.getElementById("my-panel").label = "find folder to add";
+            var dir = parent.getChildNamed(name);
+            document.getElementById("my-panel").label = "found folder to add";
+            magicFilter_listTargetDirs.push(dir);
+            document.getElementById("my-panel").label = "added folder to list "+magicFilter_listTargetDirs.length;
+        }, 2000);
 }
 
 
@@ -94,3 +104,4 @@ function init() {
 }
 
 addEventListener("load", init, true);
+
