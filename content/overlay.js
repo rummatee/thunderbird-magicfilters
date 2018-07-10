@@ -61,7 +61,7 @@ var newMailListener = {
                             mutableArray.appendElement(aMsgHdr, false /*weak*/);
                             cs.CopyMessages(aMsgHdr.folder,mutableArray,target.listDestinations[0],1,null,msgWindow,true);
                         }
-                    }, 2000*target.listLength+2000);
+                    }, prefs.getIntPref("serverTimeout")*target.listLength+2000);
             }
 
                     
@@ -115,7 +115,7 @@ function createSubfolderIfnotExists(target,name) {
 
             var dir = parent.getChildNamed(name);
             target.listDestinations.push(dir);
-        }, 2000);
+        }, prefs.getIntPref("serverTimeout"));
 }
 
 
