@@ -22,6 +22,7 @@
         <preference id="pref_mailinglistFilter" name="extensions.magicfilters.mailinglistFilter" type="bool"/>
         <preference id="pref_serverTimeout" name="extensions.magicfilters.serverTimeout" type="int"/>
         <preference id="pref_parseMode" name="extensions.magicfilters.parseMode" type="string"/>
+        <preference id="pref_parseReverse" name="extensions.magicfilters.parseReverse" type="bool"/>
     </preferences>
     
     
@@ -40,7 +41,7 @@
                 <label value="Folders cannot have dots in their name. How should MagicFilters deal with dots?" />
                 <radiogroup id="rg_parseMode" preference="pref_parseMode">
                     <radio value="subfolders" label="Create subfolders"/>
-                        <checkbox id="cb_inverseOrder" label="inverse order" />
+                        <checkbox id="cb_inverseOrder" preference = "pref_parseReverse" label="inverse order" />
                     <radio value="replace" label="replace the dot with a different character" />
                 </radiogroup>
             </vbox>

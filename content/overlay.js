@@ -73,9 +73,18 @@ function createSubfolderIfnotExists(target,name) {
         var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                 .getService(Components.interfaces.nsIPrefService)
                 .getBranch("extensions.magicfilters.");
-        document.getElementById("my-panel").label = "function called";
         var parserMode = prefs.getComplexValue("parseMode", Components.interfaces.nsISupportsString).data;
-        document.getElementById("my-panel").label = "got prefs";
+        document.getElementById("my-panel").label = "get Reverse Prefs";
+        var parserReverse = prefs.getBoolPref("parseReverse");
+        if (parserReverse) {
+            document.getElementById("my-panel").label = "reverse Parts";
+            var partsList = name.split(".");
+            document.getElementById("my-panel").label = "split list";
+            partsList.reverse();
+            document.getElementById("my-panel").label = "reverse List";
+            name = partsList.join(".");
+            document.getElementById("my-panel").label = "Join List";
+        }
         if (parserMode=="replace") {
             name = name.replace(/\./g,"-");
             document.getElementById("my-panel").label = "replaced dots";
@@ -87,7 +96,6 @@ function createSubfolderIfnotExists(target,name) {
             target.parent.createSubfolder(name,null);
             
         }
-        document.getElementById("my-panel").label = "to return folder";
         
         setTimeout(function(){
             document.getElementById("my-panel").label = "find folder to add";
