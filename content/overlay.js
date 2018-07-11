@@ -1,21 +1,16 @@
-window.addEventListener("load", function(e) { 
-    startup(); 
-}, false);
+//load preferences
+var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+        .getService(Components.interfaces.nsIPrefService)
+        .getBranch("extensions.magicfilters.");
 
-function startup() {
-    var myPanel = document.getElementById("my-panel");
-    myPanel.label = "Du nutzt magicFilters von Florian Schunk";
-}
-
-var magicFilter_listTargetDirs = [];
+//the main Listener to filter Mails
 var newMailListener = {
     msgAdded: function(aMsgHdr) {
-        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                .getService(Components.interfaces.nsIPrefService)
-                .getBranch("extensions.magicfilters.");
         var myPanel = document.getElementById("my-panel");
+        //if messages are read, we assume the user already handled them
         if( !aMsgHdr.isRead ) {
 
+                    //read the data from the mail header
                     var target = {};
                     target.recipients = aMsgHdr.recipients;
                     target.prettyName = aMsgHdr.folder.server.prettyName;
@@ -27,21 +22,22 @@ var newMailListener = {
                     target.parent = aMsgHdr.folder.rootFolder;
                     target.listDestinations = [];
                     target.listLength = 0;
+
+                    //filter for subaddresses
                     if (prefs.getBoolPref("subaddressFilter")) {
                         target.listRecipients.forEach(function(entry){
                         
                             if (entry.startsWith(target.userName+".") && entry.endsWith("@"+target.hostName)) {
                                 
                                 var dirname = entry.substring(target.userName.length+1,entry.length-target.hostName.length-1);
-                                
                                 createSubfolderIfnotExists(target,dirname);
                                 target.listLength++;
                                 
                             }
                         });
-
-
                     }
+
+                    //filter for mailinglists
                     if (prefs.getBoolPref("mailinglistFilter")) {
                         var beginningIndex = 0;
                         var endIndex = 0;
@@ -68,15 +64,18 @@ var newMailListener = {
     }
 }
 
-
+//helper function that gets the name of the folder and searches for the subfolder.
+//if the subfolder doesn't exit, it creates one.
+//it appends the folder to target.listDestinations.
 function createSubfolderIfnotExists(target,name) {
-        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                .getService(Components.interfaces.nsIPrefService)
-                .getBranch("extensions.magicfilters.");
+
+        //load preferences
         var parserMode = prefs.getComplexValue("parseMode", Components.interfaces.nsISupportsString).data;
         var substitute = prefs.getComplexValue("substitute", Components.interfaces.nsISupportsString).data;
         document.getElementById("my-panel").label = "get Reverse Prefs";
         var parserReverse = prefs.getBoolPref("parseReverse");
+        
+        //if it is set, reverse the order of the parts of the name (seperated by dots)
         if (parserReverse) {
             document.getElementById("my-panel").label = "reverse Parts";
             var partsList = name.split(".");
@@ -86,21 +85,27 @@ function createSubfolderIfnotExists(target,name) {
             name = partsList.join(".");
             document.getElementById("my-panel").label = "Join List";
         }
+
+        //if it is set replace dots
         if (parserMode=="replace") {
             name = name.replace(/\./g,substitute);
             document.getElementById("my-panel").label = "replaced dots";
         }
+
+        //check if folder exist and create if not
         try {
             target.parent.getChildNamed(name);
         } catch (err) {
             document.getElementById("my-panel").label = "to create folder";
-            target.parent.createSubfolder(name,null);
+            target.parent.createSubfolder(name,null);//if there are dots in the name it automaticly creates subfolders
             
         }
         
+        //give the server time to create the folder
         setTimeout(function(){
             document.getElementById("my-panel").label = "find folder to add";
             var parent = target.parent;
+            //if it is set search through the tree of subdirs to find the right one
             if (parserMode=="subfolders") {
                 document.getElementById("my-panel").label = "find subfolders";
                 while (name.includes(".")) {
@@ -115,6 +120,8 @@ function createSubfolderIfnotExists(target,name) {
             }
 
             var dir = parent.getChildNamed(name);
+
+            //add the folder to the list
             target.listDestinations.push(dir);
         }, prefs.getIntPref("serverTimeout"));
 }
