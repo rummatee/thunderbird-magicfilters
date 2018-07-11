@@ -74,6 +74,7 @@ function createSubfolderIfnotExists(target,name) {
                 .getService(Components.interfaces.nsIPrefService)
                 .getBranch("extensions.magicfilters.");
         var parserMode = prefs.getComplexValue("parseMode", Components.interfaces.nsISupportsString).data;
+        var substitute = prefs.getComplexValue("substitute", Components.interfaces.nsISupportsString).data;
         document.getElementById("my-panel").label = "get Reverse Prefs";
         var parserReverse = prefs.getBoolPref("parseReverse");
         if (parserReverse) {
@@ -86,7 +87,7 @@ function createSubfolderIfnotExists(target,name) {
             document.getElementById("my-panel").label = "Join List";
         }
         if (parserMode=="replace") {
-            name = name.replace(/\./g,"-");
+            name = name.replace(/\./g,substitute);
             document.getElementById("my-panel").label = "replaced dots";
         }
         try {

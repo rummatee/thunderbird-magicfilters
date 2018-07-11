@@ -23,6 +23,7 @@
         <preference id="pref_serverTimeout" name="extensions.magicfilters.serverTimeout" type="int"/>
         <preference id="pref_parseMode" name="extensions.magicfilters.parseMode" type="string"/>
         <preference id="pref_parseReverse" name="extensions.magicfilters.parseReverse" type="bool"/>
+        <preference id="pref_substitute" name="extensions.magicfilters.substitute" type="string"/>
     </preferences>
     
     
@@ -43,6 +44,8 @@
                     <radio value="subfolders" label="Create subfolders"/>
                         <checkbox id="cb_inverseOrder" preference = "pref_parseReverse" label="inverse order" />
                     <radio value="replace" label="replace the dot with a different character" />
+                        <label value="subsitute with" />
+                        <textbox id="tb_substitute" preference="pref_substitute" />
                 </radiogroup>
             </vbox>
             <vbox id="server" flex="1">
